@@ -5,7 +5,7 @@ CURRENT_MAC=`ifconfig en0| grep ether | awk '{print $2}'`
 echo "Current MAC address: $CURRENT_MAC"
 # Prompting user for disconnecting target device
 echo "Please turn off or disconnect your target device and press enter."
-read -r
+read
 # Prompting user for captive SSID
 echo "Enter captive WiFi SSID:"
 read ssid
@@ -39,6 +39,9 @@ sudo networksetup -removepreferredwirelessnetwork en0 $ssid
 sudo networksetup -setairportpower en0 on
 # Restoring original MAC address
 sudo ifconfig en0 ether $CURRENT_MAC
+echo "Original MAC address restored: `ifconfig en0| grep ether | awk '{print $2}'`"
+echo "Press enter to continue."
+read
 # Restoring original WiFi connection
 echo "Connecting current device to $ssid..."
 sudo networksetup -setairportnetwork en0 $ssid
