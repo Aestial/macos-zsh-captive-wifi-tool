@@ -8,8 +8,8 @@ Public WiFi networks are often configured with a Captive Portal in order to gath
 
 ## Roadmap
 
-1. Add hints to the script to make it more user friendly.
-2. Add a way to store the captured SSIDs in a file.
-3. Add a way to select target SSID from the stored list.
+1. ~~Add hints to the script to make it more user friendly.~~
+2. ~~Add a way to store the captured SSIDs in a file.~~
+3. ~~Add a way to select target SSID from the stored list.~~
 4. Add a way to store the captured addresses in a file using a key-value data structure.
 5. Add a way to select one of the stored addresses by the device's name.
