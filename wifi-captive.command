@@ -3,6 +3,11 @@
 SSID_FILE="ssids.txt"
 MAC_ADDRESS_FILE="mac-address.txt"
 
+declare -a ssid_array
+declare -a mac_address_array
+ssid=""
+target_mac=""
+
 echo "Captive Portal MAC spoofing script 📶."
 # Displaying current MAC address
 current_mac=`ifconfig en0| grep ether | awk '{print $2}'`
@@ -10,9 +15,6 @@ echo "Current MAC address: $current_mac"
 # Prompting user for disconnecting target device
 echo "Please turn off or disconnect your target device and press enter."
 read
-
-ssid=""
-declare -a ssid_values
 
 # Looking for file with SSIDs or creating it
 if find "$SSID_FILE" -type f 
@@ -23,23 +25,21 @@ then
     while IFS= read -r line || [[ -n "$line" ]]; do
         # Add each line to an array
         value=$(echo $line)
-        ssid_values+=("$value")
+        ssid_array+=("$value")
         # Print option
         count=$((count+1))
         echo "$count. $value"
     done < "$SSID_FILE"
-
-    echo "Number of values read from file: ${#ssid_values}"
     # Option for adding new SSID
     echo "0. Enter new SSID"
     # Prompting user for select SSID from stored
-    echo "Select SSID option:"
+    echo "Select an option:"
     read ssid_option
     # Option validation
     while [[ $ssid_option -gt $count ]] || [[ $ssid_option -lt 0 ]] || [[ $ssid_option == "" ]]
     do
         echo "Invalid option. Please select a valid option."
-        echo "Select SSID option:"
+        echo "Select an option:"
         read ssid_option
     done
 
@@ -54,7 +54,7 @@ then
         echo "$ssid" >> "$SSID_FILE"
     # If option is not 0, return selected SSID
     else
-        ssid=${ssid_values[$ssid_option]}
+        ssid=${ssid_array[$ssid_option]}
         echo "Selected SSID: $ssid"
     fi
 else
@@ -75,12 +75,69 @@ sudo networksetup -setnetworkserviceenabled Wi-Fi off
 sudo networksetup -removepreferredwirelessnetwork en0 $ssid 
 sudo networksetup -setnetworkserviceenabled Wi-Fi on
 
-# Prompting user for new MAC address
-echo "Enter target device's MAC address:"
-read target_mac
-if [[ $target_mac == "" ]]; then
-    echo "No MAC address entered. Exiting."
-    exit
+if find "$MAC_ADDRESS_FILE" -type f 
+then
+    # Displaying previous stored MAC Adresses options
+    echo "Previous stored MAC Adresses:"
+    count=0
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Add each value to an array
+        key=$(echo $line | cut -d "|" -f1)
+        value=$(echo $line | cut -d "|" -f2)
+        mac_address_array+=("$value")
+        # Print option
+        count=$((count+1))
+        echo "$count. $key - $value"
+    done < "$MAC_ADDRESS_FILE"
+    # Option for adding new MAC Address
+    echo "0. Enter new MAC Address"
+    # Prompting user for select MAC Address from stored
+    echo "Select an option:"
+    read mac_addr_option
+    # Option validation
+    while [[ $mac_addr_option -gt $count ]] || [[ $mac_addr_option -lt 0 ]] || [[ $mac_addr_option == "" ]]
+    do
+        echo "Invalid option. Please select a valid option."
+        echo "Select an option:"
+        read mac_addr_option
+    done
+
+    # If option is 0, prompt for new MAC Address
+    if [[ $mac_addr_option -eq 0 ]]; then
+        echo "Enter device name:"
+        read device_name
+        if [[ $device_name == "" ]]; then
+            echo "No device name entered. Exiting."
+            return ""
+        fi
+        echo "Enter MAC Address:"
+        read target_mac
+        if [[ $target_mac == "" ]]; then
+            echo "No device MAC address entered. Exiting."
+            return ""
+        fi
+        echo "$device_name|$target_mac" >> "$MAC_ADDRESS_FILE"
+    # If option is not 0, return selected MAC Adress
+    else
+        target_mac=${mac_address_array[$mac_addr_option]}
+        echo "Selected MAC Address: $target_mac"
+    fi
+else
+    echo "No previous stored MAC Addresses."
+    # Prompting user for MAC Address
+    echo "Enter device name:"
+    read device_name
+    if [[ $device_name == "" ]]; then
+        echo "No device name entered. Exiting."
+        return ""
+    fi
+    echo "Enter MAC Address:"
+    read target_mac
+    if [[ $target_mac == "" ]]; then
+        echo "No device MAC address entered. Exiting."
+        return ""
+    fi
+    echo "$device_name|$target_mac" >> "$MAC_ADDRESS_FILE"
 fi
 
 
