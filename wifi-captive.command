@@ -13,11 +13,11 @@ echo "Captive Portal MAC spoofing script 📶."
 current_mac=`ifconfig en0| grep ether | awk '{print $2}'`
 echo "Current MAC address: $current_mac"
 # Prompting user for disconnecting target device
-echo "Please turn off or disconnect your target device and press enter."
+echo "Please turn off or disconnect your target device and press enter to continue."
 read
 
 # Looking for file with SSIDs or creating it
-if find "$SSID_FILE" -type f 
+if find "$SSID_FILE" -type f > /dev/null
 then
     # Displaying previous stored SSIDs options
     echo "Previous stored SSIDs:"
@@ -55,7 +55,6 @@ then
     # If option is not 0, return selected SSID
     else
         ssid=${ssid_array[$ssid_option]}
-        echo "Selected SSID: $ssid"
     fi
 else
     echo "No previous stored SSIDs."
@@ -75,7 +74,9 @@ sudo networksetup -setnetworkserviceenabled Wi-Fi off
 sudo networksetup -removepreferredwirelessnetwork en0 $ssid 
 sudo networksetup -setnetworkserviceenabled Wi-Fi on
 
-if find "$MAC_ADDRESS_FILE" -type f 
+echo
+
+if find "$MAC_ADDRESS_FILE" -type f > /dev/null
 then
     # Displaying previous stored MAC Adresses options
     echo "Previous stored MAC Adresses:"
@@ -120,7 +121,6 @@ then
     # If option is not 0, return selected MAC Adress
     else
         target_mac=${mac_address_array[$mac_addr_option]}
-        echo "Selected MAC Address: $target_mac"
     fi
 else
     echo "No previous stored MAC Addresses."
@@ -139,7 +139,6 @@ else
     fi
     echo "$device_name|$target_mac" >> "$MAC_ADDRESS_FILE"
 fi
-
 
 # Spoofing MAC address
 sudo ifconfig en0 ether $target_mac

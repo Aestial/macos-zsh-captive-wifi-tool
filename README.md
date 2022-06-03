@@ -6,6 +6,8 @@ This could happen when the device does not have a web browser installed like the
 
 Public WiFi networks are often configured with a Captive Portal in order to gather specific users information like in hotels or restaurants.
 
+*NOTE: This version of the script uses the Firefox browser to access the captive portal and verify internet connection.*
+
 ## Roadmap
 
 1. ~~Add hints to the script to make it more user friendly.~~
@@ -13,5 +15,5 @@ Public WiFi networks are often configured with a Captive Portal in order to gath
 3. ~~Add a way to select target SSID from the stored list.~~
 4. ~~Add a way to store the captured addresses with their device's name in a file.~~
 5. ~~Add a way to select one of the stored addresses by choosing the device's name.~~
-6. Compatibility with the Bash Shell (for older versions of Mac OS with bash as the default shell).
+6. ~~Execute find command silently (hide output).~~
 7. Simplify redundant code. Refactor the script to make it more readable.
