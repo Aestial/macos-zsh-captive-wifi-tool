@@ -8,6 +8,15 @@ declare -a mac_address_array
 ssid=""
 target_mac=""
 
+# Argument $1: SSID
+function disconnect_and_forget_network() 
+{
+    # Another option is to use "networksetup -setairportpower en0 on/off"
+    sudo networksetup -setnetworkserviceenabled Wi-Fi off
+    sudo networksetup -removepreferredwirelessnetwork en0 $1
+    sudo networksetup -setnetworkserviceenabled Wi-Fi on
+}
+
 echo "Captive Portal MAC spoofing script 📶."
 # Displaying current MAC address
 current_mac=`ifconfig en0| grep ether | awk '{print $2}'`
@@ -70,10 +79,7 @@ else
 fi
 
 # Disconnecting from WiFi
-sudo networksetup -setnetworkserviceenabled Wi-Fi off
-sudo networksetup -removepreferredwirelessnetwork en0 $ssid 
-sudo networksetup -setnetworkserviceenabled Wi-Fi on
-
+disconnect_and_forget_network "$ssid"
 echo
 
 if find "$MAC_ADDRESS_FILE" -type f > /dev/null
@@ -150,9 +156,7 @@ echo "Fill information in captive site and press enter to continue."
 open -a /Applications/Firefox.app
 read
 # Disconnecting from WiFi
-sudo networksetup -setairportpower en0 off
-sudo networksetup -removepreferredwirelessnetwork en0 $ssid 
-sudo networksetup -setairportpower en0 on
+disconnect_and_forget_network "$ssid"
 # Restoring original MAC address
 sudo ifconfig en0 ether $current_mac
 echo "Original MAC address restored: `ifconfig en0| grep ether | awk '{print $2}'`"
