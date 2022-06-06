@@ -47,4 +47,6 @@ Public WiFi networks are often configured with a Captive Portal in order to gath
 6. ~~Execute find command silently (hide output).~~
 7. Add a way to select the network interface name to use (currently hardcoded to en0).
 8. Add a way to select the browser to use (currently hardcoded to Firefox).
-9. Simplify redundant code. Refactor the script to make it more readable.
+9. Save persistency files in dedicated MacOS Application files directory.
+10. Simplify redundant code. 
+11. Refactor the script to make it more readable.
